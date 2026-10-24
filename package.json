@@ -1,0 +1,21 @@
+{
+  "name": "dsh-agents-nodes",
+  "version": "0.1.0",
+  "description": "DSH-agents-nodes · 多 agent 协同编排节点式画布（DSH 客户端插件，独立页面应用）",
+  "type": "module",
+  "main": "lib/index.js",
+  "license": "MIT",
+  "engines": { "node": ">=20" },
+  "files": ["lib", "web", "README.md"],
+  "dsh": {
+    "manifestVersion": 1,
+    "client": {
+      "platform": "web",
+      "inject": ["@deepseek-ai/dsh-client-ui-slots"]
+    }
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "^4.0.5",
+    "@deepseek-ai/dsh-host-webserver": "^0.2.1-rc.1"
+  }
+}
