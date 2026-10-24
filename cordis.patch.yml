@@ -1,4 +1,5 @@
-﻿# Bundle patch: bind the workflow-canvas row (override keeps the row id stable).
-- id: workflow-canvas
-  name: dsh-workflow-canvas
-  config: {}
+﻿# Bundle patch: insert the host row (and let the client manifest join the UI).
+- insert:
+    - id: workflow-canvas
+      name: dsh-workflow-canvas
+      config: {}
