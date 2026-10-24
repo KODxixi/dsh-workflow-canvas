@@ -1,0 +1,4 @@
+﻿# Bundle patch: bind the workflow-canvas row (override keeps the row id stable).
+- id: workflow-canvas
+  name: dsh-workflow-canvas
+  config: {}
