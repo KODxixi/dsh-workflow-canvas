@@ -1,77 +1,102 @@
+<div align="center">
+
 # DSH Workflow Canvas
 
-> 拖节点、连线、配 prompt，一条 Agent 流水线就搭好了。
+**编排多 Agent，像画流程图一样简单。**
 
-![version](https://img.shields.io/badge/version-0.1.0-black)
-![dsh](https://img.shields.io/badge/DSH-0.2+-black)
-![license](https://img.shields.io/badge/license-MIT-black)
+<br/>
 
----
+<img src="https://img.shields.io/badge/version-0.1.0-000000?style=for-the-badge" />
+<img src="https://img.shields.io/badge/DSH-0.2+-000000?style=for-the-badge" />
+<img src="https://img.shields.io/badge/license-MIT-000000?style=for-the-badge" />
 
-## 全景
+<br/><br/>
 
-<img src="demo-01-overview.png" width="100%" alt="DSH Workflow Canvas" style="border-radius:12px"/>
+<img src="demo-01-overview.png" width="880" alt="DSH Workflow Canvas" style="border-radius:16px; box-shadow:0 20px 60px rgba(0,0,0,.5)"/>
 
-纯黑背景，垂直三带流水线：输入在顶、执行器在中、输出在底。节点带类型着色，连线是数据流。
+</div>
 
----
+<br/>
 
-## 交互
+## 为什么做这个
+
+DSH 里多 Agent 跑起来是黑盒——谁调了谁、数据怎么流、哪一步炸了，全靠看日志。
+
+Workflow Canvas 把它变成一张图。拖节点、连线、配 prompt，整条流水线一眼看清。
+
+<br/>
+
+## 它长什么样
 
 <table>
 <tr>
 <td width="50%">
-<b>点节点 → 原地展开编辑</b>
-<br/>
-<img src="demo-02-expand.png" width="100%" style="border-radius:8px"/>
+
+**点节点，原地展开**
+
+不用跳转、不用侧边栏。点一下，卡片变大，直接改配置。
+
+<img src="demo-02-expand.png" width="100%" style="border-radius:12px; margin-top:12px"/>
+
 </td>
 <td width="50%">
-<b>双击空白 → radial 加节点</b>
-<br/>
-<img src="demo-03-radial.png" width="100%" style="border-radius:8px"/>
+
+**双击空白，加节点**
+
+弹出 radial 菜单，选类型，放哪里都行。
+
+<img src="demo-03-radial.png" width="100%" style="border-radius:12px; margin-top:12px"/>
+
 </td>
 </tr>
 </table>
 
----
+<br/>
 
-## 功能
+## 你能做什么
 
-|  |  |
-|---|---|
-| **垂直流水线** | 输入 → 执行器 → 输出，数据从上往下流 |
-| **原地展开编辑** | 点节点变大成表单，改名字/prompt/工具 |
-| **7 种节点类型** | 输入/侦察/实现/审查/回归/流水线/输出 |
-| **拖线连线** | out port → in port 创建连接 |
-| **双击加节点** | radial 菜单选类型 |
-| **框选多选** | Shift+左键拖 |
-| **自动布局** | Sugiyama 一键整理 |
-| **小地图** | 右下角导航 |
-| **对齐吸附** | 拖节点自动对齐 |
-| **错误状态** | 跑炸变红脉冲 |
-| **数据流回放** | 动画跑一遍 |
-| **持久化** | localStorage 自动存 |
-| **撤销** | Ctrl+Z |
-| **折叠组** | 框选 → 右键折叠 |
+<div align="center">
+
+| | | |
+|:---:|:---:|:---:|
+| **拖节点**<br/>从输入到输出 | **连线**<br/>数据流可视化 | **配 prompt**<br/>点节点原地改 |
+| **跑一遍**<br/>数据流回放 | **看状态**<br/>跑着/成了/炸了 | **存下来**<br/>刷新不丢 |
+
+</div>
+
+<br/>
 
 ## 快捷键
 
-| 键 | 动作 |
-|---|---|
-| 左键空白拖 | 平移 |
-| Shift+左键拖 | 框选 |
-| 滚轮 | 缩放 |
-| 双击空白 | 加节点 |
-| Delete | 删除 |
-| Ctrl+Z | 撤销 |
+<div align="center">
+
+| `拖空白` | `Shift+拖` | `滚轮` | `双击` | `Delete` | `Ctrl+Z` |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| 平移 | 框选 | 缩放 | 加节点 | 删除 | 撤销 |
+
+</div>
+
+<br/>
+
+## 开始用
+
+```bash
+# 复制到 DSH 插件目录
+cp -r . ~/.dsh/profiles/desktop/node_modules/dsh-workflow-canvas/
+
+# 重启 DSH
+```
+
+<br/>
 
 ## 技术栈
 
-- 纯原生 HTML/CSS/JS，零构建
-- SVG 正交连线
-- localStorage 持久化
-- 纯黑背景深色设计
+纯原生 HTML / CSS / JavaScript。零构建、零依赖、零网络。
 
-## License
+---
 
-MIT
+<div align="center">
+
+MIT © KODxixi
+
+</div>
