@@ -440,25 +440,55 @@
   <script src="data.js"></script>
   <script>
     /*
-     * live 模式：等待宿主客户端把当前会话的 agent 树 postMessage 进来，
-     * 先替换 window.GRAPH 再加载 app.js（app.js 在加载时读取 window.GRAPH）。
-     * 1.5s 内没收到就回退到 data.js 的样例图，保证页面永远能打开。
+     * live 模式：宿主客户端会把当前会话的 agent 树 postMessage 进来。
+     * 收到就先替换 window.GRAPH 再加载 app.js（app.js 加载时读取 window.GRAPH）。
+     * 6s 内没收到才回退到 data.js 的样例图；如果样例已经启动后才收到实时数据，
+     * 自动重载一次让实时数据生效（只重载一次，避免循环）。
      */
     (function () {
       var live = new URLSearchParams(location.search).has("live");
+      var started = false;
       function start() {
-        if (window.__wcStarted) return;
+        if (started) return;
+        started = true;
         window.__wcStarted = true;
         var s = document.createElement("script");
         s.src = "app.js";
         document.body.appendChild(s);
       }
+      function log(step, extra) {
+        try {
+          fetch("/workflow-canvas/api/log", {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify(Object.assign({ step: "page-" + step, live: live }, extra || {})),
+            keepalive: true,
+          }).catch(function () {});
+        } catch (e) {}
+      }
       window.addEventListener("message", function (event) {
         var data = event.data;
         if (!data || data.type !== "wc-graph" || !data.graph) return;
+        var first = !window.__wcHadGraph;
         window.GRAPH = data.graph;
-        start();
+        window.__wcHadGraph = true;
+        log("graph-received", { nodes: (data.graph.nodes || []).length, first: first, started: started });
+        if (!started) {
+          start();
+          return;
+        }
+        if (!first) return;
+        var reloaded = false;
+        try {
+          reloaded = sessionStorage.getItem("wc-live-reload") === "1";
+        } catch (e) {}
+        if (reloaded) return;
+        try {
+          sessionStorage.setItem("wc-live-reload", "1");
+        } catch (e) {}
+        location.reload();
       });
+      log("boot");
       if (!live) {
         start();
         return;
@@ -466,7 +496,7 @@
       try {
         if (parent !== window) parent.postMessage({ type: "wc-ready" }, "*");
       } catch (e) {}
-      setTimeout(start, 1500);
+      setTimeout(start, 6000);
     })();
   </script>
 </body>
