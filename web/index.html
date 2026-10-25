@@ -454,7 +454,28 @@
         window.__wcStarted = true;
         var s = document.createElement("script");
         s.src = "app.js";
+        s.onload = function () {
+          setTimeout(report, 900);
+        };
         document.body.appendChild(s);
+      }
+      function report() {
+        try {
+          var world = document.getElementById("world");
+          var canvas = document.getElementById("canvas");
+          var count = world ? world.children.length : -1;
+          var w = canvas ? canvas.clientWidth : 0;
+          var h = canvas ? canvas.clientHeight : 0;
+          var source = window.__wcHadGraph ? "live" : "sample";
+          var badge = document.createElement("span");
+          badge.textContent = (source === "live" ? "实时" : "样例") + " · " + count + " 节点";
+          badge.style.cssText = "margin-left:auto;font-size:11px;opacity:.65;padding:0 8px;white-space:nowrap";
+          var bar = document.querySelector(".topbar");
+          if (bar) bar.appendChild(badge);
+          log("rendered", { source: source, nodes: count, w: w, h: h });
+        } catch (e) {
+          log("rendered-err", { error: String(e && e.message) });
+        }
       }
       function log(step, extra) {
         try {
@@ -513,5 +534,6 @@
   </script>
 </body>
 </html>
+
 
 
