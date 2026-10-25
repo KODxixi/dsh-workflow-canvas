@@ -1,5 +1,5 @@
 // Offline smoke test of the client bundle: emulate the ModuleLoader, then run
-// the factory and apply() against fake slots/registry, recording every call.
+// the factory and apply() against fake slots, recording every registration.
 import { readFileSync } from "node:fs";
 
 const file = "C:/AI/prototypes/dsh-agents-nodes/lib/client.js";
@@ -16,9 +16,8 @@ globalThis.window = {
     },
   },
 };
-globalThis.console = console;
 
-new Function(code)(); // executes the bundle in this scope
+new Function(code)();
 
 console.log("registered id:", captured?.id);
 if (!captured) throw new Error("bundle did not register a factory");
@@ -26,6 +25,8 @@ if (!captured) throw new Error("bundle did not register a factory");
 const calls = [];
 const react = {
   createElement: (type, props, ...children) => ({ type, props, children }),
+  useState: (initial) => [initial, () => {}],
+  useEffect: () => {},
 };
 const ctx = {
   effect(fn, label) {
@@ -44,23 +45,6 @@ const ctx = {
       return () => {};
     },
   },
-  sidebarRightTabs: {
-    register(def) {
-      calls.push(["sidebarRightTabs.register", def.id, def.kind]);
-      return () => {};
-    },
-  },
-  get(name) {
-    calls.push(["ctx.get", name]);
-    if (name === "sidebarRightTabs") return ctx.sidebarRightTabs;
-    if (name === "sidebarRight") return ctx.sidebarRight;
-    return undefined;
-  },
-  sidebarRight: {
-    openTab(kind) {
-      calls.push(["sidebarRight.openTab", kind]);
-    },
-  },
 };
 
 const exports = captured.factory((name) => {
@@ -70,14 +54,11 @@ const exports = captured.factory((name) => {
 console.log("exports:", Object.keys(exports));
 
 exports.apply(ctx);
-console.log("calls:");
 for (const call of calls) console.log("  ", call.join(" · "));
 
 const hasHeader = calls.some((c) => c[0] === "slots.register" && c[2] === "workflow-canvas-open");
-const hasType = calls.some((c) => c[0] === "sidebarRightTabs.register");
-const hasBody = calls.some((c) => c[0] === "slots.register" && c[2] === "dsh-workflow-canvas");
+const hasPanel = calls.some((c) => c[0] === "slots.register" && c[2] === "workflow-canvas-panel");
 const declaresSlots = Array.isArray(exports.inject) && exports.inject.includes("slots");
-const declaresSidebar = Array.isArray(exports.inject) && exports.inject.includes("sidebarRightTabs") && exports.inject.includes("sidebarRight");
-console.log({ hasHeader, hasType, hasBody, declaresSlots, declaresSidebar });
-if (!hasHeader || !hasType || !hasBody || !declaresSlots || !declaresSidebar) process.exit(1);
+console.log({ hasHeader, hasPanel, declaresSlots });
+if (!hasHeader || !hasPanel || !declaresSlots) process.exit(1);
 console.log("SMOKE TEST PASSED");
