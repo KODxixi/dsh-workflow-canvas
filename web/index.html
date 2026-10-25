@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8" />
@@ -474,6 +474,7 @@
         window.__wcHadGraph = true;
         log("graph-received", { nodes: (data.graph.nodes || []).length, first: first, started: started });
         if (!started) {
+          try { sessionStorage.removeItem("wc-live-reload"); } catch (e) {}
           start();
           return;
         }
@@ -496,8 +497,9 @@
       try {
         if (parent !== window) parent.postMessage({ type: "wc-ready" }, "*");
       } catch (e) {}
-      setTimeout(start, 6000);
+      setTimeout(start, 12000);
     })();
   </script>
 </body>
 </html>
+
