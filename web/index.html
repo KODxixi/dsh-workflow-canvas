@@ -357,6 +357,14 @@
   .kcard .g-name{font-size:13px}
 
   @media (prefers-reduced-motion:reduce){*{animation-duration:.001s !important;transition-duration:.001s !important}}
+
+  /* 窄面板（DSH 右侧栏 / 浮动面板）适配 */
+  @media (max-width: 820px){
+    .topbar{padding:6px 10px;gap:8px;min-height:44px}
+    .brand-txt span{display:none}
+    .topbar .top-actions .btn span{display:none}
+    .stage-tools{padding:6px 10px;gap:6px}
+  }
 </style>
 </head>
 <body>
@@ -430,6 +438,36 @@
   </div>
 
   <script src="data.js"></script>
-  <script src="app.js"></script>
+  <script>
+    /*
+     * live 模式：等待宿主客户端把当前会话的 agent 树 postMessage 进来，
+     * 先替换 window.GRAPH 再加载 app.js（app.js 在加载时读取 window.GRAPH）。
+     * 1.5s 内没收到就回退到 data.js 的样例图，保证页面永远能打开。
+     */
+    (function () {
+      var live = new URLSearchParams(location.search).has("live");
+      function start() {
+        if (window.__wcStarted) return;
+        window.__wcStarted = true;
+        var s = document.createElement("script");
+        s.src = "app.js";
+        document.body.appendChild(s);
+      }
+      window.addEventListener("message", function (event) {
+        var data = event.data;
+        if (!data || data.type !== "wc-graph" || !data.graph) return;
+        window.GRAPH = data.graph;
+        start();
+      });
+      if (!live) {
+        start();
+        return;
+      }
+      try {
+        if (parent !== window) parent.postMessage({ type: "wc-ready" }, "*");
+      } catch (e) {}
+      setTimeout(start, 1500);
+    })();
+  </script>
 </body>
 </html>
