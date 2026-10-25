@@ -490,6 +490,17 @@
         location.reload();
       });
       log("boot");
+      // 数据随 hash 一起到达：这是最可靠的通道（不依赖 postMessage 时序）
+      try {
+        var inline = location.hash.length > 1 ? JSON.parse(decodeURIComponent(location.hash.slice(1))) : null;
+        if (inline && inline.nodes && inline.nodes.length) {
+          window.GRAPH = inline;
+          window.__wcHadGraph = true;
+          log("graph-inline", { nodes: inline.nodes.length });
+          start();
+          return;
+        }
+      } catch (e) { log("graph-inline-err", { error: String(e && e.message) }); }
       if (!live) {
         start();
         return;
@@ -502,4 +513,5 @@
   </script>
 </body>
 </html>
+
 
