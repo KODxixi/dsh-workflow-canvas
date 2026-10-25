@@ -77,6 +77,7 @@ const hasHeader = calls.some((c) => c[0] === "slots.register" && c[2] === "workf
 const hasType = calls.some((c) => c[0] === "sidebarRightTabs.register");
 const hasBody = calls.some((c) => c[0] === "slots.register" && c[2] === "dsh-workflow-canvas");
 const declaresSlots = Array.isArray(exports.inject) && exports.inject.includes("slots");
-console.log({ hasHeader, hasType, hasBody, declaresSlots });
-if (!hasHeader || !hasType || !hasBody || !declaresSlots) process.exit(1);
+const declaresSidebar = Array.isArray(exports.inject) && exports.inject.includes("sidebarRightTabs") && exports.inject.includes("sidebarRight");
+console.log({ hasHeader, hasType, hasBody, declaresSlots, declaresSidebar });
+if (!hasHeader || !hasType || !hasBody || !declaresSlots || !declaresSidebar) process.exit(1);
 console.log("SMOKE TEST PASSED");
