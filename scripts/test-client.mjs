@@ -52,7 +52,14 @@ const ctx = {
   },
   get(name) {
     calls.push(["ctx.get", name]);
+    if (name === "sidebarRightTabs") return ctx.sidebarRightTabs;
+    if (name === "sidebarRight") return ctx.sidebarRight;
     return undefined;
+  },
+  sidebarRight: {
+    openTab(kind) {
+      calls.push(["sidebarRight.openTab", kind]);
+    },
   },
 };
 
@@ -69,6 +76,7 @@ for (const call of calls) console.log("  ", call.join(" · "));
 const hasHeader = calls.some((c) => c[0] === "slots.register" && c[2] === "workflow-canvas-open");
 const hasType = calls.some((c) => c[0] === "sidebarRightTabs.register");
 const hasBody = calls.some((c) => c[0] === "slots.register" && c[2] === "dsh-workflow-canvas");
-console.log({ hasHeader, hasType, hasBody });
-if (!hasHeader || !hasType || !hasBody) process.exit(1);
+const declaresSlots = Array.isArray(exports.inject) && exports.inject.includes("slots");
+console.log({ hasHeader, hasType, hasBody, declaresSlots });
+if (!hasHeader || !hasType || !hasBody || !declaresSlots) process.exit(1);
 console.log("SMOKE TEST PASSED");
