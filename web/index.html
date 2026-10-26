@@ -76,7 +76,15 @@
   .pop button{flex:1;height:26px;border-radius:7px;border:1px solid #35353f;background:#191920;
     color:var(--ink-2);font:inherit;font-size:11px;cursor:pointer;transition:background .15s,color .15s,border-color .15s}
   .pop button:hover{background:#212129;color:var(--ink);border-color:#474753}
-  .pop button:active{transform:translateY(.5px)}  .hintbar{position:absolute;left:12px;bottom:10px;font-size:11px;color:var(--ink-3);
+  .pop button:active{transform:translateY(.5px)}  .pop .row2{display:flex;gap:6px;margin-top:8px}
+  .pop input{flex:1;min-width:0;height:26px;border-radius:7px;border:1px solid #35353f;background:#0f0f14;
+    color:var(--ink);font:inherit;font-size:11px;padding:0 8px}
+  .pop input::placeholder{color:var(--ink-3)}
+  .pop input:focus{outline:none;border-color:#4b6d8f}
+  .pop .res{font-size:10.5px;color:var(--ink-3);margin-top:6px;min-height:14px}
+  .pop .res[data-ok="1"]{color:var(--ok)}
+  .pop .res[data-ok="0"]{color:var(--err)}
+  .hintbar{position:absolute;left:12px;bottom:10px;font-size:11px;color:var(--ink-3);
     background:#0f0f13cc;border:1px solid var(--line);border-radius:999px;padding:4px 10px;backdrop-filter:blur(6px)}
   .flowbar{position:absolute;right:12px;bottom:10px;display:none;align-items:center;gap:8px;
     font-size:11px;color:var(--ink-2);background:#0f0f13cc;border:1px solid var(--line);border-radius:999px;padding:4px 10px}
@@ -284,13 +292,31 @@
     pop.innerHTML = '<h4>' + escapeHtml(n.name || n.id) + '</h4>' +
       '<div class="k">' + escapeHtml(word) + (n.msg ? ' · ' + escapeHtml(n.msg) : '') +
       ' · ' + escapeHtml(String(n.id).slice(0, 12)) + '</div>' +
-      '<div class="row"><button data-act="open">打开对话</button><button data-act="copy">复制标题</button></div>';
+      '<div class="row"><button data-act="open">打开对话</button><button data-act="copy">复制标题</button></div>' +
+      '<div class="row2"><input id="wc-msg" placeholder="给它发一条消息…" /><button data-act="send">发送</button></div>' +
+      '<div class="res" id="wc-res"></div>';
     pop.style.left = Math.min(Math.max(8, r.left - sr.left + r.width + 10), sr.width - 244) + 'px';
     pop.style.top = Math.min(Math.max(8, r.top - sr.top - 4), sr.height - 110) + 'px';
     pop.hidden = false;
     pop.querySelector('[data-act="open"]').onclick = function () {
       try { if (window.parent !== window) window.parent.postMessage({ type: "wc-open", id: n.id }, "*"); } catch (e) {}
     };
+    var sendBtn = pop.querySelector('[data-act="send"]');
+    if (sendBtn) {
+      sendBtn.onclick = function () {
+        var input = pop.querySelector('#wc-msg');
+        var res = pop.querySelector('#wc-res');
+        var text = input ? input.value.trim() : '';
+        if (!text) return;
+        res.dataset.ok = '';
+        res.textContent = '发送中…';
+        try {
+          if (window.parent !== window) window.parent.postMessage({ type: 'wc-send', to: n.id, text: text }, '*');
+        } catch (e) {
+          res.textContent = String(e && e.message);
+        }
+      };
+    }
     pop.querySelector('[data-act="copy"]').onclick = function () {
       try { navigator.clipboard.writeText(n.name || n.id); } catch (e) {}
     };
@@ -407,6 +433,15 @@
     log("page-boot", { via: "wait" });
     try { if (window.parent !== window) window.parent.postMessage({ type: "wc-ready" }, "*"); } catch (e) {}
   }
+  window.addEventListener("message", function (ev) {
+    var d = ev.data;
+    if (!d || d.type !== "wc-send-result") return;
+    var res = document.getElementById("wc-res");
+    if (!res) return;
+    res.dataset.ok = d.ok ? "1" : "0";
+    res.textContent = d.ok ? "已发送" : "失败：" + (d.error || "未知错误");
+  });
+
 })();
 </script>
 </body>
