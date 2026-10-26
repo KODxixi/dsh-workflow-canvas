@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8" />
@@ -210,6 +210,10 @@
         '<div class="n">' + escapeHtml(n.name || n.id) + '</div>' +
         '<div class="m">' + escapeHtml(n.msg || "") + '</div>';
       el.addEventListener("click", function (ev) { ev.stopPropagation(); select(n.id); });
+      el.addEventListener("dblclick", function (ev) {
+        ev.stopPropagation();
+        try { if (window.parent !== window) window.parent.postMessage({ type: "wc-open", id: n.id }, "*"); } catch (e) {}
+      });
       nodesEl.appendChild(el);
     });
 
@@ -372,3 +376,4 @@
 </script>
 </body>
 </html>
+
