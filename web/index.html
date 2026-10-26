@@ -31,7 +31,7 @@
   .spacer{flex:1}
   .btn{height:26px;display:inline-flex;align-items:center;gap:5px;padding:0 9px;border-radius:7px;
     border:1px solid var(--line-2);background:#141418;color:var(--ink-2);font:inherit;font-size:11.5px;cursor:pointer;white-space:nowrap}
-  .btn:hover{background:#1a1a1f;color:var(--ink)}
+  .btn:hover{background:#1a1a1f;color:var(--ink);border-color:#3d3d47}
   .btn.on{border-color:#4b6d8f;color:#cfe8ff;background:#16222e}
   .src{font-size:10.5px;color:var(--ink-3);font-family:var(--mono);white-space:nowrap}
 
@@ -48,7 +48,8 @@
   .node{position:absolute;width:190px;height:66px;padding:8px 10px;border-radius:9px;
     background:linear-gradient(180deg,#15151a,#101014);border:1px solid var(--line-2);
     cursor:pointer;transition:border-color .16s,box-shadow .16s,opacity .16s;overflow:hidden}
-  .node:hover{border-color:#3d4a5e}
+  .node:hover{border-color:#4a5c76;background:linear-gradient(180deg,#1b1b22,#14141a);box-shadow:0 8px 22px -14px #000}
+  .node:active{transform:translateY(.5px)}
   .node.sel{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
   .node.dim{opacity:.28}
   .node .h{display:flex;align-items:center;gap:6px}
@@ -376,4 +377,5 @@
 </script>
 </body>
 </html>
+
 
